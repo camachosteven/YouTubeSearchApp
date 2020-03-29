@@ -32,14 +32,11 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav mr-lg-5 pr-lg-5">
-                    {% if current_user.is_authenticated %}
+                    {% if session['profile'] %}
                         <li class="nav-item">
-                            <a href="{{url_for('logout')}}" class="nav-link">Logout</a>
+                            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a href="{{ url_for('register') }}" class="nav-link">Register</a>
-                        </li>
                         <li class="nav-item">
                             <a href="{{ url_for('login') }}" class="nav-link">Login</a>
                         </li>
