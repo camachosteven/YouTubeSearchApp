@@ -82,9 +82,6 @@ def home():
         flash
     return render_template('base.html')
 
-def getGoogleProvider():
-    return requests.get(GOOGLE_DISCOVERY_URL).json()
-
 @app.route("/stored", methods=["GET", "POST"])
 @login_required
 def stored():
@@ -173,60 +170,6 @@ def login():
         else:
             flash('Login unsuccessful. Please check and email password and try again.', 'danger')
     return render_template('login.html', title='Login', form=form)
-
-@app.route("/googlesignin")
-def google():
-    provider = getGoogleProvider()
-    authEndPoint = provider["authorization_endpoint"]
-    request_uri = client.prepare_request_uri(
-        authEndPoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"]
-    )
-    return redirect(request_uri)
-
-@app.route('/googlesignin/callback')
-def callback():
-    code = request.args.get("code")
-    provider = getGoogleProvider()
-    tokenEndPoint = provider["token_endpoint"]
-    tokenUrl, headers, body = client.prepare_token_request(
-        tokenEndPoint,
-        authorization_response=request.url,
-        redirect_url=request.base_url,
-        code=code
-    )
-    tokenResponse = requests.post(
-        tokenUrl,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
-    )
-    client.parse_request_body_response(
-        json.dumps(tokenResponse.json())
-    )
-    userEndPoint = provider["userinfo_endpoint"]
-    uri, headers, body = client.add_token(
-        userEndPoint
-    )
-    userResponse = requests.get(
-        uri,
-        headers=headers,
-        data=body
-    )
-    userJson = userResponse.json()
-    if userJson.get("email_verified"):
-        email = userJson["email"]
-    else:
-        return ""
-    user = GoogleUser(email=email)
-    if GoogleUser.query.filter_by(email=email).first():
-        db.session.add(user)
-        db.session.commit()
-    login_user(user)
-    return redirect(url_for('home'))
-
-
 
 @app.route("/logout")
 @login_required
