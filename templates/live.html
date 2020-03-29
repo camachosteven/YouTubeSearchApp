@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="d-flex justify-content-center pt-3">
+                <div class="alert alert-{{ category }} alert-dismissible fade show", style="width: 50%;">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <form method="POST" class="d-flex justify-content-center pt-2">
+        {{ form.hidden_tag() }}
+        <div class="form-group pr-2" style="width: 10%;">
+            {{ form.select(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.execute(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    {% if start %}
+        <div class="d-flex justify-content-center">
+            <img src="{{ url_for('videofeed') }}">
+        </div>
+    {% endif %}
+{% endblock content %}

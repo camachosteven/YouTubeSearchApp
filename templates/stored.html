@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="d-flex justify-content-center pt-3">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show", style="width: 50%;">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    {% if form %}
+        <div class="d-flex justify-content-center">
+            {% if select %}
+                <p class="text-center lead pt-2" style="width: 50%;">
+                    At the bottom of the search, you can select the video you would like to video.
+                    The video will pop up once you choose. Enjoy!
+                </p>
+            {% else %}
+                <p class="text-center lead pt-2" style="width: 50%;">
+                    You can find and play a Youtube video through here. Simply, type in
+                    your desired search and select how many options you'd like to choose from.
+                </p>
+            {% endif %}
+        </div>
+        <form method="POST" class="d-flex justify-content-center">
+            {{ form.hidden_tag() }}
+            <div class="form-group pr-2" style="width: 40%;">
+                {% if form.query.errors %}
+                    {{ form.query(class="form-control is-invalid", placeholder="Between 5-75 characters long") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.query.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.query(class="form-control", placeholder="Between 5-75 characters long") }}
+                {% endif %}
+            </div>
+            <div class="form-group" style="width: 10%;">
+                {{ form.size(class="form-control") }}
+            </div>
+            <div class="form-group pl-2">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    {% endif %}
+    {% if response %}
+        {% for item in response["items"] %}
+            <div class="d-flex container pt-3 mb-3">
+                <picture>
+                    {% with url = item["snippet"]["thumbnails"]["medium"]["url"] %}
+                        <source media="(min-width: 600px)" srcset="{{ url }}">
+                    {% endwith %}
+                    {% with url = item["snippet"]["thumbnails"]["default"]["url"] %}
+                        <source media="(min-width: 300px)" srcset="{{ url }}">
+                    {% endwith %}
+                    {% with url = item["snippet"]["thumbnails"]["medium"]["url"] %}
+                        <img class="rounded-lg" src="{{ url }}">
+                    {% endwith %}
+                </picture>
+                <div class="pl-5">
+                    <p class="h5">{{ item["snippet"]["title"] }}</p>
+                    <p>{{ item["snippet"]["description"] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if choose %}
+        <form method="POST" class="d-flex justify-content-center">
+            {{ choose.hidden_tag() }}
+            <div class="form-group" style="width: 10%;">
+                {{ choose.videoNumber(class="form-control") }}
+            </div>
+            <div class="form-group pl-2">
+                {{ choose.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    {% endif %}
+    {% if vid %}
+        <div class="d-flex justify-content-center pt-2">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ vid }}" 
+            frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+        </div>
+    {% endif %}
+{% endblock content %}
