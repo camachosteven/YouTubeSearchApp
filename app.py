@@ -11,7 +11,6 @@ from apiclient.errors import HttpError
 from search import SearchVideo, SelectVideo, requestVideo, ControlStream
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-from oauthlib.oauth2 import WebApplicationClient
 
 # import camera driver
 if os.environ.get('CAMERA'):
@@ -22,14 +21,10 @@ else:
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '3639b04fec10c30d78aabea1727078e0'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-GOOGLE_CLIENT_ID = '993498181290-up191g851h2jl08rn0bj552f4op5qru7.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '0PMQAdh3SZausG386ze-SNsa'
-GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 class VideoSelections(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,10 +35,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(60), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-
-class GoogleUser(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(320), unique=True)
 
 
 class RegistrationForm(FlaskForm):
