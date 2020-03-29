@@ -17,21 +17,21 @@ from werkzeug.exceptions import HTTPException
 from search import SearchVideo, SelectVideo, requestVideo, ControlStream
 
 # import camera driver
-if os.environ.get('CAMERA'):
+if env.get('CAMERA'):
     Camera = import_module('camera_' + os.environ['CAMERA']).Camera
 else:
     from camera import Camera
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '3639b04fec10c30d78aabea1727078e0'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SECRET_KEY'] = env.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = env.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 oauth = OAuth(app)
 
 auth0 = oauth.register(
     'auth0',
-    client_id = 'XXV26umazQFUjh0i6F9ObZaXoWlzixfq',
-    client_secret = 'H9CRjJOoq08jjVh9zubbTXq8oIytP9QUStdqEqOa-ZJiMceAtB0qJkxR29Bzz7ds',
+    client_id = env.get('CLIENT_ID'),
+    client_secret = env.get('CLIENT_SECRET'),
     api_base_url='https://dev-xpds945m.auth0.com',
     access_token_url='https://dev-xpds945m.auth0.com/oauth/token',
     authorize_url='https://dev-xpds945m.auth0.com/authorize',
@@ -142,14 +142,9 @@ def logout():
     session.clear()
     params = {
         'returnTo': url_for('home', _external=True),
-        'client_id': 'XXV26umazQFUjh0i6F9ObZaXoWlzixfq',
+        'client_id': env.get('CLIENT_ID'),
     }
     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
-
-@app.route("/contact")
-@requires_auth
-def contact():
-    return render_template('contact.html', title="Contact")
     
 if __name__ == "__main__":
     app.run(debug=True)

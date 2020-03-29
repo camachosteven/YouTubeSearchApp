@@ -27,9 +27,6 @@
                     <li class="nav-item">
                         <a href="{{ url_for('live') }}" class="nav-link">Live</a> 
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav mr-lg-5 pr-lg-5">
                     {% if session['profile'] %}
@@ -49,12 +46,12 @@
                 <p class="pt-3 text-center" style="font-family: 'Exo', sans-serif; font-size: 60px;">
                     SC Video Streaming
                 </p>
-                <div class="container d-flex justify-content-between">
+                <div class="container mt-5 pt-3 d-flex justify-content-between">
                     <div style="width: 46%;">
                         <img class="img-fluid img-thumbnail" 
                         src="../static/images/HomeImage.jpg" alt="SC">
                     </div>
-                    <p  class="text-justify" 
+                    <p  class="text-justify mr-5" 
                     style="font-family: 'Libre Baskerville', sans-serif; width: 40%; font-size: 20px;">
                         This website demonstrates the 2 types of video streaming. You can make a Youtube search, 
                         select among the options, and watch the video you want in the "Stored" webpage. Likewise,
