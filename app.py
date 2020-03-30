@@ -24,8 +24,6 @@ else:
     
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = env.get('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = env.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 oauth = OAuth(app)
 
@@ -36,6 +34,8 @@ if IS_PRODUCTION == None:
     if envfile:
         load_dotenv(envfile)
 
+app.config['SECRET_KEY'] = env.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = env.get('SQLALCHEMY_DATABASE_URI')
 AUTH0_CALLBACK_URL = env.get('AUTH0_CALLBACK_URL')
 AUTH0_CLIENT_ID = env.get('AUTH0_CLIENT_ID')
 AUTH0_CLIENT_SECRET = env.get('AUTH0_CLIENT_SECRET')
@@ -160,5 +160,6 @@ def logout():
     }
     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
     
+PORT = int(os.environ.get("PORT", 5000))
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=PORT)
