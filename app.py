@@ -21,6 +21,7 @@ if env.get('CAMERA'):
     Camera = import_module('camera_' + os.environ['CAMERA']).Camera
 else:
     from camera import Camera
+    
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = env.get('SECRET_KEY')
@@ -28,13 +29,26 @@ app.config['SQLALCHEMY_DATABASE_URI'] = env.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 oauth = OAuth(app)
 
+IS_PRODUCTION = env.get('IS_HEROKU', None)
+
+if IS_PRODUCTION == None:
+    envfile = find_dotenv()
+    if envfile:
+        load_dotenv(envfile)
+
+AUTH0_CALLBACK_URL = env.get('AUTH0_CALLBACK_URL')
+AUTH0_CLIENT_ID = env.get('AUTH0_CLIENT_ID')
+AUTH0_CLIENT_SECRET = env.get('AUTH0_CLIENT_SECRET')
+AUTH0_DOMAIN = 'https://' + env.get('AUTH0_DOMAIN')
+
+
 auth0 = oauth.register(
     'auth0',
-    client_id = env.get('CLIENT_ID'),
-    client_secret = env.get('CLIENT_SECRET'),
-    api_base_url='https://dev-xpds945m.auth0.com',
-    access_token_url='https://dev-xpds945m.auth0.com/oauth/token',
-    authorize_url='https://dev-xpds945m.auth0.com/authorize',
+    client_id = AUTH0_CLIENT_ID,
+    client_secret = AUTH0_CLIENT_SECRET,
+    api_base_url=AUTH0_DOMAIN,
+    access_token_url=AUTH0_DOMAIN + '/oauth/token',
+    authorize_url=AUTH0_DOMAIN + '/authorize',
     client_kwargs={
         'scope': 'openid profile email',
     },
@@ -122,7 +136,7 @@ def videofeed():
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    return auth0.authorize_redirect(redirect_uri='http://localhost:5000/callback')
+    return auth0.authorize_redirect(redirect_uri=AUTH0_CALLBACK_URL)
 
 @app.route("/callback")
 def callback():
@@ -142,7 +156,7 @@ def logout():
     session.clear()
     params = {
         'returnTo': url_for('home', _external=True),
-        'client_id': env.get('CLIENT_ID'),
+        'client_id': env.get('AUTH0_CLIENT_ID'),
     }
     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
     
