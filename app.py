@@ -160,6 +160,6 @@ def logout():
     }
     return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
     
-PORT = int(os.environ.get("PORT", 500))
+PORT = int(os.environ.get("PORT", 5000))
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=PORT)
