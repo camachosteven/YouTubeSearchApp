@@ -120,19 +120,6 @@ def stored():
             flash('Congratulations, you can now watch your desired video.', 'success')
             return render_template('stored.html', form=form, title="Stored", vid=desiredVideo.video_id)
         return render_template('stored.html', form=form, title="Stored")
-
-@app.route("/live", methods=["GET", "POST"])
-@requires_auth
-def live():
-    form = ControlStream()
-    if form.select.data == 'Start':
-        return render_template('live.html', title="Live", form=form, start=True)
-    return render_template('live.html', title="Live", form=form, start=False)
-
-@app.route("/videofeed")
-def videofeed():
-    return Response(gen(Camera()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
     
 @app.route("/login", methods=["GET", "POST"])
 def login():

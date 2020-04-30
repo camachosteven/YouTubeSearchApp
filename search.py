@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from os import environ as env
 from apiclient.discovery import build
 from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length, NumberRange
@@ -12,7 +13,7 @@ class SearchVideo(FlaskForm):
 
 
 def requestVideo(query: str, size: int):
-    api_key = "AIzaSyBnDfD3rdUUUkZSXSxfhPGaYSgo2MRlFxE"
+    api_key = env.get('YOUTUBE')
     youtube = build('youtube', 'v3', developerKey=api_key)
     api_req = youtube.search().list(part='snippet', q=query, maxResults=size, type='video')
     return api_req.execute()
